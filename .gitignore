@@ -13,6 +13,7 @@
 package-lock.json
 
 # misc
+.vscode/settings.json
 .DS_Store
 .env
 .env.local

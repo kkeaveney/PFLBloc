@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SPDX
-pragma solidity ^0.7.0;
+pragma solidity ^0.7.3;
 
 import "hardhat/console.sol";
 
@@ -10,6 +10,7 @@ contract Token {
   uint256 public totalSupply = 1000000;
   address public owner;
   mapping(address => uint256) balances;
+  mapping(address => uint256) bankBalance;
 
   constructor() {
     balances[msg.sender] = totalSupply;
