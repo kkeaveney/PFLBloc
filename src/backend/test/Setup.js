@@ -8,11 +8,13 @@ describe("Token contract", function () {
   let owner;
   let addr1;
   let addrs;
+  let totalSupply = 1000000;
+
 
   beforeEach(async function () {
     ERC20 = await ethers.getContractFactory("Token");
     [owner, addr1, ...addrs] = await ethers.getSigners();
-    token = await ERC20.deploy('Token','ZRK');
+    token = await ERC20.deploy(totalSupply);
   });
 
   
@@ -23,11 +25,11 @@ describe("Token contract", function () {
     });
 
     it('Should set the contract name', async function () {
-        expect(await token.name()).to.equal('Token');
+        expect(await token.name()).to.equal('ERC20');
     })
 
     it('Should set the contract symbol', async function () {
-        expect(await token.symbol()).to.equal('ZRK');
+        expect(await token.symbol()).to.equal('TOK');
     })
 
     it('Returns token total supply', async function () {
