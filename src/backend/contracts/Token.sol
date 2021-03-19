@@ -1,33 +1,21 @@
 // SPDX-License-Identifier: SPDX
 pragma solidity ^0.7.3;
 
-import "hardhat/console.sol";
+import './interfaces/IToken.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract Token {
-  string public name = "Blockchain Master University";
-  string public symbol = "BMU";
+contract Token is ERC20 ('ERC20', 'TOK'), IToken, Ownable {
 
-  uint256 public totalSupply = 1000000;
-  address public owner;
-  mapping(address => uint256) balances;
-  mapping(address => uint256) bankBalance;
-
-  constructor() {
-    balances[msg.sender] = totalSupply;
-    owner = msg.sender;
+  constructor(uint256 _totalSupply)  {
+    _mint(msg.sender, _totalSupply);
+  }
+  
+  function mint(address account, uint256 amount) external override {
+    _mint(account, amount);
   }
 
-  function transfer(address to, uint256 amount) external {
-    console.log("Sender balance is %s tokens", balances[msg.sender]);
-    console.log("Trying to send %s tokens to %s", amount, to);
-
-    require(balances[msg.sender] >= amount, "Not enough tokens");
-
-    balances[msg.sender] -= amount;
-    balances[to] += amount;
-  }
-
-  function balanceOf(address account) external view returns (uint256) {
-    return balances[account];
+ function burn(address account, uint256 amount) external override {
+    _burn(account, amount);
   }
 }

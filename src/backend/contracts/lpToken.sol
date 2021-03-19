@@ -17,6 +17,4 @@ contract lpToken is ERC20('LPToken','LP'), ILPToken, Ownable {
     _burn(account, amount);
   }
 
-  
-
 }
