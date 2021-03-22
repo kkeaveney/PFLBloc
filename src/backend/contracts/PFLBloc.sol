@@ -4,28 +4,44 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './interfaces/ILPToken.sol';
+import './interfaces/IToken.sol';
+
 contract PFLBloc is Ownable {
 
     using SafeMath for uint256;
     ILPToken public lpToken;
-    IERC20 public ERC20Token;
+    IToken public ERC20Token;
 
     uint256 public totalStaked;
+    uint256 public totalLPTokens;
+
+    uint256 timelock;
 
     mapping (address => uint256) stakedFunds;
     mapping (address => uint256) lpRewards;
-    
 
-    constructor(ILPToken _lpToken, IERC20 _PFLToken) {
+    
+    constructor(ILPToken _lpToken, IToken _PFLToken) {
         lpToken = ILPToken(_lpToken);
-        ERC20Token = IERC20(_PFLToken);
+        ERC20Token = IToken(_PFLToken);
     }
 
-    function stake(uint256 _amount) public {
-        require(ERC20Token.balanceOf(msg.sender) >= _amount);
-        totalStaked = totalStaked.add(_amount);
-        lpRewards[msg.sender] = totalStaked.div(_amount);
-        lpToken.mint(msg.sender, lpRewards[msg.sender]);
+    function stake(uint256 _amount) external {
+        //require(ERC20Token.balanceOf(msg.sender) >= _amount) ;
+        require(
+            ERC20Token.transferFrom(msg.sender, address(this), _amount), 
+            'Insufficient funds'
+        );
+        totalStaked = totalStaked.add(_amount); // total staked
+        stakedFunds[msg.sender] = stakedFunds[msg.sender].add(_amount);
+        lpRewards[msg.sender] = lpRewards[msg.sender].add(_amount);
+        lpToken.mint(msg.sender, _amount);
+    }
+
+    function withdraw(uint256 _amount) external{
+        require(block.number > timelock, 'Timelock is still active');
+        stakedFunds[msg.sender] = stakedFunds[msg.sender].sub(_amount) ;
+        ERC20Token.burn(msg.sender, _amount);
         
     }
 
@@ -33,8 +49,18 @@ contract PFLBloc is Ownable {
         return owner();
     }
 
+    function setTimelock(uint256 _timelock) onlyOwner public {
+        timelock = _timelock;
+    }
+
     function getLPRewards (address _account) public view returns (uint256) {
         return lpRewards[_account];
     }
+
+    function getStakedFunds(address _account) public view returns (uint256) {
+        return stakedFunds[_account];
+    }
+
+    
 
 }
