@@ -27,7 +27,6 @@ contract PFLBloc is Ownable {
     }
 
     function stake(uint256 _amount) external {
-        //require(ERC20Token.balanceOf(msg.sender) >= _amount) ;
         require(
             ERC20Token.transferFrom(msg.sender, address(this), _amount), 
             'Insufficient funds'
@@ -38,10 +37,23 @@ contract PFLBloc is Ownable {
         lpToken.mint(msg.sender, _amount);
     }
 
-    function withdraw(uint256 _amount) external{
+    function _withdrawStake(uint256 _amount) internal {
         require(block.number > timelock, 'Timelock is still active');
         stakedFunds[msg.sender] = stakedFunds[msg.sender].sub(_amount) ;
-        ERC20Token.burn(msg.sender, _amount);
+        ERC20Token.transferFrom(address(this), msg.sender, stakedFunds[msg.sender]);
+        
+    }
+
+    function withdrawStake(uint256 _amount) external {
+        require(stakedFunds[msg.sender] >= _amount, 'Insufficient funds to withdraw');
+        _withdrawStake(_amount);
+    }
+
+    function _claimRewards() internal {
+        
+    }
+
+    function claimRewards() external {
         
     }
 
@@ -49,7 +61,7 @@ contract PFLBloc is Ownable {
         return owner();
     }
 
-    function setTimelock(uint256 _timelock) onlyOwner public {
+    function setTimelock(uint256 _timelock) onlyOwner external {
         timelock = _timelock;
     }
 
