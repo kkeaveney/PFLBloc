@@ -158,7 +158,7 @@ describe('PFL Contract', function () {
                 await pflBloc.withdrawStake(stakeAmount);
                 // Will revert due to timelock constraints
                 await expect(pflBloc.stakeFunds(totalSupply)).to.be.revertedWith("transfer amount exceeds balance");
-                await expect(pflBloc.cancelWithdraw()).to.be.revertedWith("Timelock Expired")
+                await expect(pflBloc.cancelWithdraw()).to.be.revertedWith("Timelock has Expired")
             })
         })
     })
