@@ -158,7 +158,36 @@ describe('PFL Contract', function () {
                 await pflBloc.withdrawStake(stakeAmount);
                 // Will revert due to timelock constraints
                 await expect(pflBloc.stakeFunds(totalSupply)).to.be.revertedWith("transfer amount exceeds balance");
-                await expect(pflBloc.cancelWithdraw()).to.be.revertedWith("Timelock has Expired")
+                await expect(pflBloc.cancelWithdraw()).to.be.revertedWith("Timelock Expired")
+            })
+        })
+    })
+
+    describe('claiming funds', () => {
+        let stakeAmount = 100;
+        describe('success', () => {
+            it('claims', async () => {
+                await pflBloc.stakeFunds(stakeAmount);
+                // Confirm balances
+                expect(await lpToken.totalSupply()).to.be.equal(100);
+                expect(await lpToken.balanceOf(owner.address)).to.be.equal(100);
+                expect(await token.balanceOf(owner.address)).to.eq(totalSupply - (initialAccountBalance * 2) - stakeAmount);
+                expect(await lpToken.balanceOf(pflBloc.address)).to.be.equal(0);
+                
+                await pflBloc.withdrawStake(stakeAmount);
+                // Confirm balances
+                expect(await lpToken.totalSupply()).to.be.equal(100);
+                expect(await token.balanceOf(owner.address)).to.eq(totalSupply - (initialAccountBalance * 2) - stakeAmount);
+                expect(await lpToken.balanceOf(owner.address)).to.be.equal(0);
+                expect(await lpToken.balanceOf(pflBloc.address)).to.be.equal(100);
+                
+                await pflBloc.claimFunds(owner.address);
+                // Confirm balances
+                expect(await token.balanceOf(owner.address)).to.eq(totalSupply - (initialAccountBalance * 2));
+                expect(await lpToken.totalSupply()).to.be.equal(0);
+                expect(await lpToken.balanceOf(owner.address)).to.be.equal(0);
+                expect(await lpToken.balanceOf(pflBloc.address)).to.be.equal(0);
+
             })
         })
     })

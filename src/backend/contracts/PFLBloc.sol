@@ -65,7 +65,7 @@ contract PFLBloc is Ownable {
 
     function cancelWithdraw() external {
         StakeWithdraw memory withdraw = stakesWithdraw[msg.sender];
-        
+
         require(withdraw.blockInitiated != 0, 
         'Withdraw inactive');
         require(
@@ -75,6 +75,20 @@ contract PFLBloc is Ownable {
 
         require(lpToken.transfer(msg.sender, withdraw.stake));
         delete stakesWithdraw[msg.sender];
+    }
+
+    function claimFunds(address _staker) external {
+        StakeWithdraw memory withdraw = stakesWithdraw[_staker];
+        require(withdraw.blockInitiated != 0, 'Withdraw inactive');
+
+        require(withdraw.blockInitiated.add(timelock) <= block.number, 
+        'timelock active');
+
+        uint256 funds = withdraw.stake.mul(getTotalStakedFunds()).div(
+            lpToken.totalSupply()
+        );
+        ERC20Token.transfer(_staker, funds);
+        lpToken.burn(address(this), withdraw.stake);
     }
 
     function isOwner() public view returns(address) {
