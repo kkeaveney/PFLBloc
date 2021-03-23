@@ -15,10 +15,17 @@ contract PFLBloc is Ownable {
     uint256 public totalStaked;
     uint256 public totalLPTokens;
 
+    uint256 internal totalStakedFunds;
     uint256 timelock;
 
-    mapping (address => uint256) stakedFunds;
-    mapping (address => uint256) lpRewards;
+    struct StakeWithdraw {
+        uint256 blockInitiated;
+        uint256 stake;
+    }
+
+    mapping(address => StakeWithdraw) public stakesWithdraw;
+    //mapping (address => uint256) stakedFunds;
+    //mapping (address => uint256) lpRewards;
 
     
     constructor(ILPToken _lpToken, IToken _PFLToken) {
@@ -26,35 +33,48 @@ contract PFLBloc is Ownable {
         ERC20Token = IToken(_PFLToken);
     }
 
-    function stake(uint256 _amount) external {
+    function stakeFunds(uint256 _amount) external {
         require(
             ERC20Token.transferFrom(msg.sender, address(this), _amount), 
             'Insufficient funds'
         );
         totalStaked = totalStaked.add(_amount); // total staked
-        stakedFunds[msg.sender] = stakedFunds[msg.sender].add(_amount);
-        lpRewards[msg.sender] = lpRewards[msg.sender].add(_amount);
-        lpToken.mint(msg.sender, _amount);
-    }
 
-    function _withdrawStake(uint256 _amount) internal {
-        require(block.number > timelock, 'Timelock is still active');
-        stakedFunds[msg.sender] = stakedFunds[msg.sender].sub(_amount) ;
-        ERC20Token.transferFrom(address(this), msg.sender, stakedFunds[msg.sender]);
+        uint256 totalStake = lpToken.totalSupply();
+
+        uint256 stake;
+        if(totalStake == 0) {
+            // mint initial stake
+            stake = _amount;
+        } else {
+            stake = _amount.mul(totalStake).div(getTotalStakedFunds());
+        }
+
+        totalStakedFunds = totalStakedFunds.add(_amount);
+        lpToken.mint(msg.sender, stake);
         
     }
 
+   
+    // To withdraw funds, add them to a vesting schedule
     function withdrawStake(uint256 _amount) external {
-        require(stakedFunds[msg.sender] >= _amount, 'Insufficient funds to withdraw');
-        _withdrawStake(_amount);
+        require(stakesWithdraw[msg.sender].blockInitiated == 0, 'Withdraw active');
+        require(lpToken.transferFrom(msg.sender, address(this), _amount),'Transfer failed');
+        stakesWithdraw[msg.sender] = StakeWithdraw(block.number, _amount);
     }
 
-    function _claimRewards() internal {
+    function cancelWithdraw() external {
+        StakeWithdraw memory withdraw = stakesWithdraw[msg.sender];
         
-    }
+        require(withdraw.blockInitiated != 0, 
+        'Withdraw inactive');
+        require(
+            withdraw.blockInitiated.add(timelock) > block.number,
+            "Timelock Expired"
+        );
 
-    function claimRewards() external {
-        
+        require(lpToken.transfer(msg.sender, withdraw.stake));
+        delete stakesWithdraw[msg.sender];
     }
 
     function isOwner() public view returns(address) {
@@ -65,12 +85,15 @@ contract PFLBloc is Ownable {
         timelock = _timelock;
     }
 
-    function getLPRewards (address _account) public view returns (uint256) {
-        return lpRewards[_account];
+   
+    function getFunds(address _staker) external view returns (uint256) {
+        return lpToken.balanceOf(_staker).mul(getTotalStakedFunds()).div(
+            lpToken.totalSupply()
+        );
     }
 
-    function getStakedFunds(address _account) public view returns (uint256) {
-        return stakedFunds[_account];
+    function getTotalStakedFunds() public view returns (uint256) {
+        return totalStakedFunds;
     }
 
     
