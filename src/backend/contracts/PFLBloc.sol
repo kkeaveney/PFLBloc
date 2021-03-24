@@ -23,18 +23,36 @@ contract PFLBloc is Ownable {
         uint256 stake;
     }
 
-    mapping(address => StakeWithdraw) public stakesWithdraw;
-    //mapping (address => uint256) stakedFunds;
-    //mapping (address => uint256) lpRewards;
+    struct ProtocolProfile {
+        // translated to the value of the native erc20 of the pool
+        uint256 maxFundsCovered;
+        // percentage of the funds covered
+        uint256 premiumPerBlock;
+    }
 
+    bytes32[] public protocols;
+
+    mapping(bytes32 => uint256) public profileBalances;
+    mapping(bytes32 => ProtocolProfile) public profiles;
+    mapping(address => StakeWithdraw) public stakesWithdraw;
+   
     
     constructor(ILPToken _lpToken, IToken _PFLToken) {
         lpToken = ILPToken(_lpToken);
         ERC20Token = IToken(_PFLToken);
     }
 
+    function isOwner() public view returns(address) {
+        return owner();
+    }
+
+    function setTimelock(uint256 _timelock) onlyOwner external {
+        timelock = _timelock;
+    }
+
     function stakeFunds(uint256 _amount) external {
         require(
+
             ERC20Token.transferFrom(msg.sender, address(this), _amount), 
             'Insufficient funds'
         );
@@ -91,15 +109,15 @@ contract PFLBloc is Ownable {
         lpToken.burn(address(this), withdraw.stake);
     }
 
-    function isOwner() public view returns(address) {
-        return owner();
+    function addProfileBalance(bytes32 _protocol, uint256 _amount) external {
+        require(
+            ERC20Token.transferFrom(msg.sender, address(this), _amount), 
+            'Insufficient funds'
+        );
+        profileBalances[_protocol] = profileBalances[_protocol].add(_amount);
+
     }
 
-    function setTimelock(uint256 _timelock) onlyOwner external {
-        timelock = _timelock;
-    }
-
-   
     function getFunds(address _staker) external view returns (uint256) {
         return lpToken.balanceOf(_staker).mul(getTotalStakedFunds()).div(
             lpToken.totalSupply()
