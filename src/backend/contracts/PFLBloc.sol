@@ -31,9 +31,12 @@ contract PFLBloc is Ownable {
     }
 
     bytes32[] public protocols;
-
-    mapping(bytes32 => uint256) public profileBalances;
     mapping(bytes32 => ProtocolProfile) public profiles;
+
+    mapping(bytes32 => bool) public protocolsCovered;
+    mapping(bytes32 => uint256) public profilePremiumLastPaid;
+    mapping(bytes32 => uint256) public profileBalances;
+    
     mapping(address => StakeWithdraw) public stakesWithdraw;
    
     
@@ -42,12 +45,46 @@ contract PFLBloc is Ownable {
         ERC20Token = IToken(_PFLToken);
     }
 
-    function isOwner() public view returns(address) {
-        return owner();
-    }
-
     function setTimelock(uint256 _timelock) onlyOwner external {
         timelock = _timelock;
+    }
+
+    // a governing contract will call update profiles
+    // protocols can do an insurance request against this contract
+    function updateProfiles(
+        bytes32 _protocol,
+        uint256 _maxFundsCovered,
+        uint256 _percentagePremiumPerBlock,
+        uint256 _premiumLastPaid
+        //uint256 _forceOpenDebtPay
+    ) external onlyOwner {
+        require(_protocol != bytes32(0), 'Invalid Protocol');
+        require(_maxFundsCovered != 0, 'Invalid Funds');
+        require(_percentagePremiumPerBlock != 0, 'Invalid Risk');
+        // if(_forceOpenDebtPay) {
+        //     require(tryPayOffDebt(_protocol, true), 'Failed to pay off debt');
+        // }
+        profiles[_protocol] = ProtocolProfile(
+            _maxFundsCovered,
+            _percentagePremiumPerBlock
+        );
+
+        if(!protocolsCovered[_protocol]){
+            protocolsCovered[_protocol] = true;
+            protocols.push(_protocol);
+        }
+
+        if(_premiumLastPaid == 0) {
+            require(profilePremiumLastPaid[_protocol] > 0, 'Invalid last paid'); /// What is this ?!?!?!
+            return;
+        }
+
+        if(_premiumLastPaid == uint256(-1)) {
+            profilePremiumLastPaid[_protocol] = block.number;
+        } else {
+            require(_premiumLastPaid < block.number, 'Too high');
+            profilePremiumLastPaid[_protocol] = _premiumLastPaid;
+        }
     }
 
     function stakeFunds(uint256 _amount) external {
@@ -126,6 +163,27 @@ contract PFLBloc is Ownable {
 
     function getTotalStakedFunds() public view returns (uint256) {
         return totalStakedFunds;
+    }
+
+    function isOwner() public view returns(address) {
+        return owner();
+    }
+
+    function protocolCovered(bytes32 _protocol) public view returns (bool){
+        return protocolsCovered[_protocol];
+    }
+
+    function premiumLastPaid(bytes32 _protocol) public view returns (uint256) {
+        return profilePremiumLastPaid[_protocol];
+    }
+
+    function coveredFunds(bytes32 _protocol) public view returns(uint256) {
+        ProtocolProfile memory p = profiles[_protocol];
+        require(p.maxFundsCovered > 0, 'Profile not found');
+        if(getTotalStakedFunds() > p.maxFundsCovered) {
+            return p.maxFundsCovered;
+        }
+        return getTotalStakedFunds();
     }
 
     
