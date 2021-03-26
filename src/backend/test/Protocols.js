@@ -10,14 +10,16 @@ describe('PFL Contract', function () {
     let addr1;
     let addr2;
     let addrs;
+    let balanceReceiver;
     const PLACEHOLDER_PROTOCOL = 
     '0x561ca898cce9f021c15a441ef41899706e923541cee724530075d1a1144761c7'; 
     let pflBloc;
     let totalSupply = 1000000;
+    let initialStake = 250;
     let initialAccountBalance = 10000; // Not for deploying address
     const onePercent = ethers.BigNumber.from("10").pow(16);
     
-
+    
     beforeEach(async () => {
         LPToken = await ethers.getContractFactory("lpToken");
         lpToken = await LPToken.deploy();
@@ -28,7 +30,9 @@ describe('PFL Contract', function () {
         PFLBloc = await ethers.getContractFactory("PFLBloc");
         pflBloc = await PFLBloc.deploy(lpToken.address, token.address);
 
-        [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+        [owner, addr1, addr2, balanceReceiver, ...addrs] = await ethers.getSigners();
+        
+        
 
         // Approve Token allowance to be transferred by pflBloc
         await token.approve(pflBloc.address, constants.MaxUint256);
@@ -41,10 +45,10 @@ describe('PFL Contract', function () {
         // Transfer ownership to pflBloc contract
         await token.transferOwnership(pflBloc.address);
 
-        await pflBloc.stakeFunds(250);
+        await pflBloc.stakeFunds(initialStake);
     })
 
-    describe('Protocols', () => {
+    describe('Updating Protocols', () => {
         describe('success', () => {
             it('adds a protocol', async () => {
                 
@@ -66,7 +70,7 @@ describe('PFL Contract', function () {
                     expect(await pflBloc.coveredFunds(PLACEHOLDER_PROTOCOL)).to.equal(500); 
                     expect(await pflBloc.protocolCovered(PLACEHOLDER_PROTOCOL)).to.equal(true);
                     // Premium last paid is current block
-                    expect(await pflBloc.premiumLastPaid(PLACEHOLDER_PROTOCOL)).to.equal(blockNumber);                                                                      
+                    expect(await pflBloc.premiumLastPaid(PLACEHOLDER_PROTOCOL)).to.equal(blockNumber);  
             })                                                                              
         })
         describe('failure', () => {
@@ -105,20 +109,63 @@ describe('PFL Contract', function () {
                     150
                     )).to.be.revertedWith('Too high')
             })
-            it('0', async () => {
+            it('profile premium last paid is invalid', async () => {
                 await expect(pflBloc.updateProfiles(
                     PLACEHOLDER_PROTOCOL,
                     500,
                     onePercent,
                     0
-                ))
-                await expect(pflBloc.updateProfiles(
-                    PLACEHOLDER_PROTOCOL,
-                    500,
-                    onePercent,
-                    0
-                )).to.be.reverted
+                )).to.be.revertedWith('Invalid last paid')
             })
+        })
+    })
+    describe('Removing Protocols', () => {
+        it('deletes first protocol', async () => {
+            await pflBloc.updateProfiles(
+                PLACEHOLDER_PROTOCOL,
+                500,
+                onePercent,
+                constants.MaxUint256
+            )
+            // No funds paid into protocol
+            let blockNumber = await ethers.provider.getBlockNumber();
+            expect(await token.balanceOf(balanceReceiver.address)).to.be.equal(0); 
+            // Protocol is covered
+            expect(await pflBloc.protocolCovered(PLACEHOLDER_PROTOCOL)).to.equal(true);
+            // Premium last paid is current block
+            expect(await pflBloc.premiumLastPaid(PLACEHOLDER_PROTOCOL)).to.be.equal(blockNumber);
+
+            
+            await pflBloc.removeProtocol(
+                PLACEHOLDER_PROTOCOL,
+                0,
+                balanceReceiver.address
+            )
+            // Still no funds paid into protocol
+            expect(await token.balanceOf(balanceReceiver.address)).to.equal(0);
+            // Protocol is no longer covered
+            expect(await pflBloc.protocolCovered(PLACEHOLDER_PROTOCOL)).to.equal(false);
+            // Premium last paid is reset
+            expect(await pflBloc.premiumLastPaid(PLACEHOLDER_PROTOCOL)).to.be.equal(0);
+        })
+        it('deletes protocol with funds added to profile balance', async () => {
+            let profileFunds = 10;
+
+            await pflBloc.updateProfiles(
+                PLACEHOLDER_PROTOCOL,
+                500,
+                onePercent,
+                constants.MaxUint256
+            )
+            await pflBloc.addProfileBalance(PLACEHOLDER_PROTOCOL, profileFunds);
+            // 250 staked on init
+            expect(await pflBloc.getFunds(owner.address)).to.be.equal(250);
+            expect(await pflBloc.getTotalStakedFunds()).to.be.equal(250);
+            expect(await pflBloc.coveredFunds(PLACEHOLDER_PROTOCOL)).to.be.equal(250);
+            expect(await pflBloc.withdrawStake(250));
+            expect(await token.balanceOf(owner.address)).to.be.equal(totalSupply - (initialAccountBalance * 2) - initialStake - profileFunds);
+            expect(await pflBloc.claimFunds(owner.address));
+            expect(await token.balanceOf(owner.address)).to.be.equal(totalSupply - (initialAccountBalance * 2) - profileFunds);
         })
     })
 

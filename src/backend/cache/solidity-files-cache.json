@@ -215,8 +215,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/PFLBloc.sol": {
-      "lastModificationDate": 1616690747034,
-      "contentHash": "c1177033718b5504fee70fbc95f33344",
+      "lastModificationDate": 1616759335374,
+      "contentHash": "f04d14d681e84275b375d643ff7f041f",
       "sourceName": "src/backend/contracts/PFLBloc.sol",
       "solcConfig": {
         "version": "0.7.3",
