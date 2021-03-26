@@ -87,6 +87,35 @@ contract PFLBloc is Ownable {
         }
     }
 
+    function removeProtocol(
+        bytes32 _protocol,
+        uint256 _index,
+        //bool forceOpenDebtPay,
+        address _balanceReceiver
+     ) external onlyOwner {
+         require(protocols[_index] == _protocol, 'Invalid index');
+        //  if(_forceOpenDebtPay) {
+        //      require(tryPayOffDebt(_protocol, true), 'Faild to pay off debt');
+        //  }
+        // transfer remaining balance to user
+        require(
+            ERC20Token.transferFrom(
+                address(this),
+                _balanceReceiver,
+                profileBalances[_protocol]
+            ), 'Insufficient Funds'
+        );
+        delete profiles[_protocol];
+        delete profileBalances[_protocol];
+        delete profilePremiumLastPaid[_protocol];
+        protocolsCovered[_protocol] = false;
+        // set last element to current index
+        protocols[_index] = protocols[protocols.length -1];
+        // remove last element
+        delete protocols[protocols.length -1];
+        protocols.pop();
+    }
+
     function stakeFunds(uint256 _amount) external {
         require(
 
