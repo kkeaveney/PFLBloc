@@ -8,6 +8,8 @@
 # testing
 /coverage
 
+notes.md
+
 # production
 /build
 package-lock.json

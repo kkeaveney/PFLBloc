@@ -3,7 +3,7 @@ const { BigNumber } = require("@ethersproject/bignumber");
 const { parseEther } = require("ethers/lib/utils");
 const { constants, utils } = require("ethers");
 
-describe('PFL Contract', function () {
+describe('Protocols', function () {
     let token;
     let lpToken;
     let owner;
