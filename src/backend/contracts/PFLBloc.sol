@@ -27,7 +27,7 @@ contract PFLBloc is Ownable {
         // translated to the value of the native erc20 of the pool
         uint256 maxFundsCovered;
         // percentage of the funds covered
-        uint256 premiumPerBlock;
+        uint256 percentagePremiumPerBlock;
     }
 
     bytes32[] public protocols;
@@ -184,10 +184,26 @@ contract PFLBloc is Ownable {
 
     }
 
+    function accruedDebt(bytes32 _protocol) public view returns (uint256) {
+        return
+            block.number.sub(profilePremiumLastPaid[_protocol]).mul(
+                premiumPerBlock(_protocol)
+            );
+    }
+
     function getFunds(address _staker) external view returns (uint256) {
         return lpToken.balanceOf(_staker).mul(getTotalStakedFunds()).div(
             lpToken.totalSupply()
         );
+    }
+
+    function premiumPerBlock(bytes32 _protocol) public view returns (uint256) {
+        ProtocolProfile memory p = profiles[_protocol];
+        return
+            coveredFunds(_protocol).mul(p.percentagePremiumPerBlock).div(
+                10**18
+            );
+        
     }
 
     function getTotalStakedFunds() public view returns (uint256) {
