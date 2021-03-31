@@ -103,7 +103,7 @@ describe('Debt', function () {
             })
         })
 
-        describe('verify debt with gradual staking', () => {
+        describe('verify debt with incremental staking', () => {
             it('stakes', async () => {
                 blockNumber = await block(
                     pflBloc.updateProfiles(
