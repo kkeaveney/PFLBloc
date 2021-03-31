@@ -106,7 +106,7 @@ describe('Protocols', function () {
                     PLACEHOLDER_PROTOCOL,
                     500,
                     onePercent,
-                    150
+                    1250
                     )).to.be.revertedWith('Too high')
             })
             it('profile premium last paid is invalid', async () => {

@@ -184,6 +184,25 @@ contract PFLBloc is Ownable {
 
     }
 
+    function tryPayOffDebt(bytes32 _protocol, bool _useRedirect) internal returns (bool) {
+        uint256 debt = accruedDebt(_protocol);
+        if(debt > profileBalances[_protocol]) {
+            return false;
+        }
+        profileBalances[_protocol] = profileBalances[_protocol].sub(debt);
+        totalStakedFunds = totalStakedFunds.add(debt);
+        profilePremiumLastPaid[_protocol] = block.number;
+
+        // if(_useRedirect && redirectStakeToStrategy) {
+        //     _depositStrategyManager(debt);
+        // }
+        return true;
+    }
+
+    function payOffDebt(bytes32 _protocol) external {
+        require(tryPayOffDebt(_protocol, true), 'Insufficient funds');
+    }
+
     function accruedDebt(bytes32 _protocol) public view returns (uint256) {
         return
             block.number.sub(profilePremiumLastPaid[_protocol]).mul(
@@ -209,6 +228,8 @@ contract PFLBloc is Ownable {
     function getTotalStakedFunds() public view returns (uint256) {
         return totalStakedFunds;
     }
+
+    
 
     function isOwner() public view returns(address) {
         return owner();
