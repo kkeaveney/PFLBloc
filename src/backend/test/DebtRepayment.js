@@ -1,6 +1,5 @@
 const { expect } = require('chai');
 const { constants } = require('ethers');
-const { isCallTrace } = require('hardhat/internal/hardhat-network/stack-traces/message-trace');
 const { block } = require("./utils.js");
 
 describe('Debt', function () {
