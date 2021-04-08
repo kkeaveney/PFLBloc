@@ -15,6 +15,7 @@ describe('Debt', function () {
     let premium;
     let blockNumber;
     let blocksToPay;
+    let currentBlock ;
     
     
         beforeEach(async () => {
@@ -40,7 +41,7 @@ describe('Debt', function () {
                     pflBloc.stakeFunds(stake);
                     debt = await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL);
                     premium = await pflBloc.premiumPerBlock(PLACEHOLDER_PROTOCOL);
-                    const currentBlock = await ethers.BigNumber.from(
+                    currentBlock = await ethers.BigNumber.from(
                         await ethers.provider.getBlockNumber()
                     );
                     blocksToPay = currentBlock.sub(blockNumber);
@@ -52,11 +53,27 @@ describe('Debt', function () {
                     expect(await pflBloc.getTotalStakedFunds()).to.be.equal(stake);
                     // Pay Off protocol debt
                     pflBloc.addProfileBalance(PLACEHOLDER_PROTOCOL, 500);
-                    let accruedDebt = await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)
+
+                    currentBlock = await ethers.BigNumber.from(
+                        await ethers.provider.getBlockNumber()
+                    );
+                    blocksToPay = currentBlock.sub(blockNumber);
+                    console.log(blocksToPay.toString());
+                    //let accruedDebt = await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)
+                    expect(debt).to.equal(premium.mul(blocksToPay)); 
+                    expect(await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)).to.be.equal(10);
+                    blocksToPay = currentBlock.sub(blockNumber);
+                    console.log(blocksToPay.toString());
+                    
                     pflBloc.payOffDebt(PLACEHOLDER_PROTOCOL);
-                    
-                    expect(await pflBloc.getTotalStakedFunds()).to.be.equal(accruedDebt);
-                    
+                    expect(await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)).to.be.equal(0);
+
+                    currentBlock = await ethers.BigNumber.from(
+                        await ethers.provider.getBlockNumber()
+                    );
+                    blocksToPay = currentBlock.sub(blockNumber);
+                    expect(await pflBloc.getTotalStakedFunds()).to.be.equal(stake + (premium * blocksToPay));
+                     
             })
         })
             describe('failure', () => {
