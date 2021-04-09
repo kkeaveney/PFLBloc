@@ -228,7 +228,6 @@ contract PFLBloc is Ownable {
     function getTotalStakedFunds() public view returns (uint256) {
         return totalStakedFunds;
     }
-
     
 
     function isOwner() public view returns(address) {
@@ -241,6 +240,10 @@ contract PFLBloc is Ownable {
 
     function premiumLastPaid(bytes32 _protocol) public view returns (uint256) {
         return profilePremiumLastPaid[_protocol];
+    }
+
+    function profileBalance(bytes32 _protocol) public view returns (uint256) {
+        return profileBalances[_protocol];
     }
 
     function coveredFunds(bytes32 _protocol) public view returns(uint256) {

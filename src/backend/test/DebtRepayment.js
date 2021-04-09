@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect, assert } = require('chai');
 const { constants } = require('ethers');
 const { block } = require("./utils.js");
 
@@ -15,8 +15,7 @@ describe('Debt', function () {
     let premium;
     let blockNumber;
     let blocksToPay;
-    let currentBlock ;
-    
+    let currentBlock;
     
         beforeEach(async () => {
             LPToken = await ethers.getContractFactory("lpToken");
@@ -48,31 +47,32 @@ describe('Debt', function () {
             })
             describe('success', () => {
                 it('protocol successfully pays debt', async () => {
+                    //1 block, premium = 5 
                     expect(debt).to.equal(premium.mul(blocksToPay)); 
-                    expect(debt).to.equal(5) //1 block, premium = 5 
                     expect(await pflBloc.getTotalStakedFunds()).to.be.equal(stake);
-                    // Pay Off protocol debt
-                    pflBloc.addProfileBalance(PLACEHOLDER_PROTOCOL, 500);
-
-                    currentBlock = await ethers.BigNumber.from(
-                        await ethers.provider.getBlockNumber()
-                    );
-                    blocksToPay = currentBlock.sub(blockNumber);
-                    console.log(blocksToPay.toString());
-                    //let accruedDebt = await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)
-                    expect(debt).to.equal(premium.mul(blocksToPay)); 
-                    expect(await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)).to.be.equal(10);
-                    blocksToPay = currentBlock.sub(blockNumber);
-                    console.log(blocksToPay.toString());
                     
-                    pflBloc.payOffDebt(PLACEHOLDER_PROTOCOL);
-                    expect(await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)).to.be.equal(0);
-
+                    pflBloc.addProfileBalance(PLACEHOLDER_PROTOCOL, 500);
+                    expect(await pflBloc.profileBalance(PLACEHOLDER_PROTOCOL)).to.be.equal(stake);
+                    expect(await pflBloc.getTotalStakedFunds()).to.be.equal(stake);
+                    
+                    // Pay Off protocol debt
+                    debt = await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL);
                     currentBlock = await ethers.BigNumber.from(
                         await ethers.provider.getBlockNumber()
                     );
                     blocksToPay = currentBlock.sub(blockNumber);
-                    expect(await pflBloc.getTotalStakedFunds()).to.be.equal(stake + (premium * blocksToPay));
+                    expect(debt).to.equal(premium.mul(blocksToPay));
+
+                    await pflBloc.payOffDebt(PLACEHOLDER_PROTOCOL);
+                    currentBlock = await ethers.BigNumber.from(
+                        await ethers.provider.getBlockNumber()
+                    );
+                    blocksToPay = currentBlock.sub(blockNumber);
+                    
+                    expect(await pflBloc.getTotalStakedFunds()).to.equal(premium.mul(blocksToPay).add(stake));
+                    expect(await pflBloc.profileBalance(PLACEHOLDER_PROTOCOL)).to.equal(stake - (premium.mul(blocksToPay)));
+                    expect(await pflBloc.accruedDebt(PLACEHOLDER_PROTOCOL)).to.be.equal(0);
+        
                      
             })
         })
