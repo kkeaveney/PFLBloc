@@ -6,12 +6,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import './interfaces/ILPToken.sol';
 import './interfaces/IToken.sol';
 import './interfaces/IPayout.sol';
+import './StrategyManager.sol';
 
 contract PFLBloc is Ownable {
 
     using SafeMath for uint256;
+
+    IStrategyManager public strategyManager;
+
     ILPToken public lpToken;
     IToken public ERC20Token;
+
+    bool public redirectStakeToStrategy;
 
     uint256 public totalStaked;
     uint256 public totalLPTokens;
@@ -39,15 +45,46 @@ contract PFLBloc is Ownable {
     mapping(bytes32 => uint256) public profileBalances;
     
     mapping(address => StakeWithdraw) public stakesWithdraw;
-   
     
-    constructor(ILPToken _lpToken, IToken _PFLToken) {
+    
+    constructor(address _lpToken, address _PFLToken, address _strategyManager) public {
         lpToken = ILPToken(_lpToken);
         ERC20Token = IToken(_PFLToken);
+        strategyManager = IStrategyManager(_strategyManager);
     }
 
     function setTimelock(uint256 _timelock) onlyOwner external {
         timelock = _timelock;
+    }
+
+    function _withdrawStrategyManager(uint256 _amount) internal {
+        strategyManager.withdraw(address(lpToken), _amount);
+        totalStakedFunds = totalStakedFunds.add(_amount);
+    }
+
+    function withdrawStrategyManager(uint _amount) external onlyOwner {
+        _withdrawStrategyManager(_amount);
+    }
+
+    function _depositStrategyManager(uint256 _amount) internal onlyOwner {
+        require(
+            lpToken.transfer(address(strategyManager), _amount), 'Insufficient funds'
+        );
+        totalStakedFunds = totalStakedFunds.sub(_amount);
+        strategyManager.deposit(address(lpToken));
+    }
+
+    function depositStrategyManager(uint256 _amount) external {
+        _depositStrategyManager(_amount);
+    }
+
+    function setStrategyManager(address _strategyManager) external onlyOwner {
+        // todo withdraw all funds
+        strategyManager = IStrategyManager(_strategyManager);
+    }
+
+    function setRedirectStakeToStrategy(bool _redirect) external onlyOwner {
+        redirectStakeToStrategy = _redirect;
     }
 
     // a governing contract will call update profiles

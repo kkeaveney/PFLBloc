@@ -215,8 +215,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/PFLBloc.sol": {
-      "lastModificationDate": 1618326684314,
-      "contentHash": "894c88d37bfd98f97f03d55c341aa2e2",
+      "lastModificationDate": 1618395901837,
+      "contentHash": "872c5436437a4e88d8621eb900c2e47e",
       "sourceName": "src/backend/contracts/PFLBloc.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -246,7 +246,8 @@
         "@openzeppelin/contracts/access/Ownable.sol",
         "./interfaces/ILPToken.sol",
         "./interfaces/IToken.sol",
-        "./interfaces/IPayout.sol"
+        "./interfaces/IPayout.sol",
+        "./StrategyManager.sol"
       ],
       "versionPragmas": [
         "^0.7.3"
@@ -510,9 +511,373 @@
         "PayOut"
       ]
     },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/interfaces/chainlink/AggregatorV3Interface.sol": {
+      "lastModificationDate": 1618328946068,
+      "contentHash": "7cedadbd34334dc54959cad2c5165ddb",
+      "sourceName": "src/backend/contracts/interfaces/chainlink/AggregatorV3Interface.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.0"
+      ],
+      "artifacts": [
+        "AggregatorV3Interface"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/StrategyManager.sol": {
+      "lastModificationDate": 1618396662518,
+      "contentHash": "c1f4335e4b713e871aaa687098e35bd3",
+      "sourceName": "src/backend/contracts/StrategyManager.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IPool.sol",
+        "./interfaces/IStrategyManager.sol",
+        "./interfaces/IStrategy.sol",
+        "./interfaces/chainlink/AggregatorV3Interface.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/math/SafeMath.sol",
+        "@openzeppelin/contracts/token/ERC20/SafeERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "StrategyManager"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/interfaces/IPool.sol": {
+      "lastModificationDate": 1618397271854,
+      "contentHash": "2a674c5a03c22fbb5a899b3edb47a956",
+      "sourceName": "src/backend/contracts/interfaces/IPool.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "IPool"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/interfaces/IStrategyManager.sol": {
+      "lastModificationDate": 1618397164143,
+      "contentHash": "f8f27ea1e3b9c4eebcfcf2bf00716d77",
+      "sourceName": "src/backend/contracts/interfaces/IStrategyManager.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "IStrategyManager"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/interfaces/IStrategy.sol": {
+      "lastModificationDate": 1618393225046,
+      "contentHash": "4596bd2f32eb58b607e115beed3509e2",
+      "sourceName": "src/backend/contracts/interfaces/IStrategy.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "IStrategy"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/node_modules/@openzeppelin/contracts/token/ERC20/SafeERC20.sol": {
+      "lastModificationDate": 1615893953273,
+      "contentHash": "33e22842646d746e5c4124c2fdc051aa",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol",
+        "../../math/SafeMath.sol",
+        "../../utils/Address.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.0 <0.8.0"
+      ],
+      "artifacts": [
+        "SafeERC20"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/node_modules/@openzeppelin/contracts/utils/Address.sol": {
+      "lastModificationDate": 1615893953249,
+      "contentHash": "7aa46886ff5abe7515496208a5e2ce5a",
+      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.2 <0.8.0"
+      ],
+      "artifacts": [
+        "Address"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/mocks/MockStrategy.sol": {
+      "lastModificationDate": 1618408209914,
+      "contentHash": "08de4db4675f5b4543cf2e89f607e6b0",
+      "sourceName": "src/backend/contracts/mocks/MockStrategy.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../interfaces/IStrategy.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "MockStrategy"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/mocks/MockPool.sol": {
+      "lastModificationDate": 1618408507920,
+      "contentHash": "a3e648c9d2190ac00b654e7fab843a30",
+      "sourceName": "src/backend/contracts/mocks/MockPool.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "../interfaces/IPool.sol",
+        "../interfaces/IStrategyManager.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "MockPool"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/util/ExampleToken.sol": {
+      "lastModificationDate": 1618410159910,
+      "contentHash": "b68bfa67e765690077ad564f0e314f39",
+      "sourceName": "src/backend/contracts/util/ExampleToken.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "ExampleToken"
+      ]
+    },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/util/PayOut.sol": {
-      "lastModificationDate": 1618315360429,
-      "contentHash": "a495190df62d7c8a2dee730371986b64",
+      "lastModificationDate": 1618397259147,
+      "contentHash": "78eeab348f032e44dfaa99c6ca6e42ad",
       "sourceName": "src/backend/contracts/util/PayOut.sol",
       "solcConfig": {
         "version": "0.7.3",

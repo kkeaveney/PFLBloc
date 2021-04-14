@@ -57,11 +57,10 @@ describe('Payout', function () {
                 expect(await pflBloc.profileBalance(PLACEHOLDER_PROTOCOL)).to.be.equal(0);
             })
             it('pays out after funds have been claimed', async () => {
+                // Need to refactor with Strategy Manager
                 await pflBloc.withdrawStake(250);
                 await pflBloc.claimFunds(owner.address);
-                expect(await pflBloc.getTotalStakedFunds()).to.be.equal(250)
-                
-
+                expect(await pflBloc.getTotalStakedFunds()).to.be.equal(250)    
             })
 
 
