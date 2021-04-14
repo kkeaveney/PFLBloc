@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './interfaces/ILPToken.sol';
 import './interfaces/IToken.sol';
+import './interfaces/IPayout.sol';
 
 contract PFLBloc is Ownable {
 
@@ -116,6 +117,19 @@ contract PFLBloc is Ownable {
         protocols.pop();
     }
 
+    function insurancePayout(
+        bytes32 _protocol,
+        uint256 _amount,
+        address _payout ) 
+        external onlyOwner {
+            require (coveredFunds(_protocol) >= _amount, "Insufficient_coverage");
+            require(ERC20Token.transfer(_payout, _amount), "Insufficient_Funds");
+            IPayout payout = IPayout(_payout);
+            payout.deposit(address(ERC20Token));
+            totalStakedFunds = totalStakedFunds.sub(_amount);
+        }
+    
+
     function stakeFunds(uint256 _amount) external {
         require(
 
@@ -168,11 +182,23 @@ contract PFLBloc is Ownable {
         require(withdraw.blockInitiated.add(timelock) <= block.number, 
         'timelock active');
 
+        _tryPayOffDebtAll(false);
+
         uint256 funds = withdraw.stake.mul(getTotalStakedFunds()).div(
             lpToken.totalSupply()
         );
+        
+        if(funds > totalStakedFunds) {
+            _withdrawStrategyManager(funds.sub(totalStakedFunds));
+        } else if (redirectStakeToStrategy && funds < totalStakedFunds) {
+            _depositStrategyManager(totalStakedFunds.sub(funds));
+        }
+
+        
+        
         ERC20Token.transfer(_staker, funds);
         lpToken.burn(address(this), withdraw.stake);
+        
     }
 
     function addProfileBalance(bytes32 _protocol, uint256 _amount) external {
@@ -197,6 +223,12 @@ contract PFLBloc is Ownable {
         //     _depositStrategyManager(debt);
         // }
         return true;
+    }
+
+    function _tryPayOffDebtAll(bool _useRedirect) internal {
+        for(uint256 i = 0; i < protocols.length; i++) {
+            tryPayOffDebt(protocols[i], _useRedirect);
+        }
     }
 
     function payOffDebt(bytes32 _protocol) external {
