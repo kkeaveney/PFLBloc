@@ -31,12 +31,32 @@ describe("Strategy Manager, single strategy", () => {
         );
     })
     it('Deposit', async () => {
+        // Transfer Eth to Strategy Manager
         await ERC20.transfer(strategyManager.address, parseEther('1000'));
-        expect(await ERC20.balanceOf(owner.address)).to.eq(parseEther('9000'));
+        expect(await ERC20.balanceOf(strategyManager.address)).to.eq(parseEther('1000'));
+        expect(await strategyManager.balanceOfNative()).to.eq(parseEther("0"));
+
+        // Strategy Manager deposits Eth into Eth Token Strategy 
         await strategyManager.deposit(ERC20.address);
+        expect(await ERC20.balanceOf(strategyManager.address)).to.eq(parseEther('0'));
         expect(await strategyManager.balanceOf(ERC20.address)).to.eq(
             parseEther('1000')
         );
         expect(await strategyManager.balanceOfNative()).to.eq(parseEther("1000"));
+
+        // Deposit more funds
+        await ERC20.transfer(strategyManager.address, parseEther('5000'));
+        expect(await ERC20.balanceOf(strategyManager.address)).to.eq(parseEther('5000'))
+        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(
+            parseEther('1000')
+        );
+        expect(await strategyManager.balanceOfNative()).to.eq(parseEther("1000"));
+        await strategyManager.deposit(ERC20.address);
+        expect(await ERC20.balanceOf(strategyManager.address)).to.eq(parseEther('0'));
+        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(
+            parseEther('6000')
+        );
+        expect(await strategyManager.balanceOfNative()).to.eq(parseEther("6000"));
+
     })
 })
