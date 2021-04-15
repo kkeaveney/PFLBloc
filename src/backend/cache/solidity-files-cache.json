@@ -546,8 +546,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/StrategyManager.sol": {
-      "lastModificationDate": 1618396662518,
-      "contentHash": "c1f4335e4b713e871aaa687098e35bd3",
+      "lastModificationDate": 1618505136713,
+      "contentHash": "2a4617fbb6a299758429f4ab6ce27ab4",
       "sourceName": "src/backend/contracts/StrategyManager.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -572,6 +572,7 @@
         }
       },
       "imports": [
+        "hardhat/console.sol",
         "./interfaces/IPool.sol",
         "./interfaces/IStrategyManager.sol",
         "./interfaces/IStrategy.sol",
