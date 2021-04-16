@@ -10,8 +10,7 @@ describe("Strategy Manager, single strategy", () => {
         [owner] = await ethers.getSigners();
         let WETH = await ethers.getContractFactory("ExampleToken");
         ERC20 = await WETH.deploy(owner.getAddress(), parseEther("10000"));
-        AAVE = await WETH.deploy(owner.getAddress(), parseEther("10000"));
-
+        
         const MockPool = await ethers.getContractFactory("MockPool")
         mockPool = await MockPool.deploy()
         await mockPool.setToken(ERC20.address);
@@ -44,19 +43,15 @@ describe("Strategy Manager, single strategy", () => {
         );
         expect(await strategyManager.balanceOfNative()).to.eq(parseEther("1000"));
 
-        // Deposit more funds
-        await ERC20.transfer(strategyManager.address, parseEther('5000'));
-        expect(await ERC20.balanceOf(strategyManager.address)).to.eq(parseEther('5000'))
-        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(
-            parseEther('1000')
-        );
-        expect(await strategyManager.balanceOfNative()).to.eq(parseEther("1000"));
-        await strategyManager.deposit(ERC20.address);
-        expect(await ERC20.balanceOf(strategyManager.address)).to.eq(parseEther('0'));
-        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(
-            parseEther('6000')
-        );
-        expect(await strategyManager.balanceOfNative()).to.eq(parseEther("6000"));
-
+       
     })
+    it('withdraw', async () => {
+        await mockPool.withdraw(ERC20.address, parseEther("400"));
+        expect(await strategyManager.balanceOfNative()).to.eq(parseEther("600"))
+        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(parseEther("600"))
+        expect(await ERC20.balanceOf(strategyManager.address)).to.eq(parseEther('0'));
+        expect(await ERC20.balanceOf(mockPool.address)).to.eq(parseEther('400'))
+    })
+
+    
 })

@@ -84,7 +84,7 @@ contract StrategyManager is IStrategyManager, Ownable {
     function withdraw(address _token, uint256 _amount) external override onlyPool {
         address strategy = strategies[_token];
         require(strategy != address(0), "NO_STRATEGY");
-        IStrategy(strategy).withdraw(msg.sender);
+        IStrategy(strategy).withdraw(_amount);
         IERC20(_token).safeTransfer(msg.sender, _amount);
     }
 
