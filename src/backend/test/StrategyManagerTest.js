@@ -53,5 +53,20 @@ describe("Strategy Manager, single strategy", () => {
         expect(await ERC20.balanceOf(mockPool.address)).to.eq(parseEther('400'))
     })
 
-    
+    it('Update strategy', async () => {
+        mockStrategyNew = await MockStrategy.deploy();
+        await mockStrategyNew.setWant(ERC20.address);
+
+        await strategyManager.updateStrategy(
+            ERC20.address,
+            mockStrategyNew.address,
+            constant.AddressZero
+        );
+
+        expect(await ERC20.balanceOf(mockStrategy.address)).to.eq(parseEther("0"));
+        expect(await ERC20.balanceOf(mockStrategyNew.address)).to.eq(pareEther("600"));
+    })
+    it('validate storage', async () => {
+        
+    })
 })
