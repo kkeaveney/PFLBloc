@@ -60,13 +60,56 @@ describe("Strategy Manager, single strategy", () => {
         await strategyManager.updateStrategy(
             ERC20.address,
             mockStrategyNew.address,
-            constant.AddressZero
+            constants.AddressZero
         );
 
         expect(await ERC20.balanceOf(mockStrategy.address)).to.eq(parseEther("0"));
-        expect(await ERC20.balanceOf(mockStrategyNew.address)).to.eq(pareEther("600"));
+        expect(await ERC20.balanceOf(mockStrategyNew.address)).to.eq(parseEther("600"));
     })
     it('validate storage', async () => {
-        
+        expect(await strategyManager.strategies(ERC20.address)).to.eq(mockStrategyNew.address);
+        expect(await strategyManager.priceOracle(ERC20.address)).to.eq(constants.AddressZero);
+        expect(await strategyManager.tokens(0)).to.eq(ERC20.address);
+    })
+})
+describe("Strategy Manager, multi strategy", () => {
+    let MockStrategy;
+    before(async () => {
+        [owner] = await ethers.getSigners();
+        WETH = await ethers.getContractFactory("ExampleToken");
+        ERC20 = await WETH.deploy(owner.getAddress(), parseEther("10000"));
+        AAVE = await WETH.deploy(owner.getAddress(), parseEther("10000"));
+
+        const MockPool = await ethers.getContractFactory("MockPool");
+        mockPool = await MockPool.deploy();
+        await mockPool.setToken(ERC20.address);
+
+        MockStrategy = await ethers.getContractFactory("MockStrategy");
+        mockStrategy = await MockStrategy.deploy();
+        await mockStrategy.setWant(ERC20.address);
+        mockStrategyAave = await MockStrategy.deploy();
+        mockStrategyAave.setWant(AAVE.address);
+
+        const mockOracle = await ethers.getContractFactory("MockOracle");
+        mockOracleAave = await mockOracle.deploy();
+        // gwei = 9, mockOracle = 8, so 1 = 10
+        await mockOracleAave.setPrice(parseUnits("1", "gwei"));
+
+        const StrategyManager = await ethers.getContractFactory("StrategyManager");
+        strategyManager = await StrategyManager.deploy();
+        await mockPool.setsm(strategyManager.address);
+        await strategyManager.updateStrategy(
+            ERC20.address,
+            mockStrategy.address,
+            constant.AddressZero
+        );
+        await strategyManager.updateStrategy(
+            AAVE.address,
+            mockStrategyAave.address,
+            mockOracleAave.address
+        );
+    })
+    it("Deposit", async () => {
+
     })
 })
