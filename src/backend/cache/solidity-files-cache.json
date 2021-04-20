@@ -546,8 +546,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/StrategyManager.sol": {
-      "lastModificationDate": 1618568321824,
-      "contentHash": "c997577ccfaab1f577295fd0525e5dfe",
+      "lastModificationDate": 1618912181547,
+      "contentHash": "15bc7b0fc991eab1e8126db253f21309",
       "sourceName": "src/backend/contracts/StrategyManager.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -572,15 +572,14 @@
         }
       },
       "imports": [
-        "hardhat/console.sol",
-        "./interfaces/IPool.sol",
-        "./interfaces/IStrategyManager.sol",
-        "./interfaces/IStrategy.sol",
-        "./interfaces/chainlink/AggregatorV3Interface.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/SafeERC20.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/math/SafeMath.sol",
-        "@openzeppelin/contracts/token/ERC20/SafeERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+        "./interfaces/chainlink/AggregatorV3Interface.sol",
+        "./interfaces/IPool.sol",
+        "./interfaces/IStrategyManager.sol",
+        "./interfaces/IStrategy.sol"
       ],
       "versionPragmas": [
         "^0.7.3"
@@ -874,6 +873,43 @@
       ],
       "artifacts": [
         "ExampleToken"
+      ]
+    },
+    "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/mocks/MockOracle.sol": {
+      "lastModificationDate": 1618907930939,
+      "contentHash": "1840c112172ecbfeefdb5c5eeed20016",
+      "sourceName": "src/backend/contracts/mocks/MockOracle.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "../interfaces/chainlink/AggregatorV3Interface.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "MockOracle"
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/util/PayOut.sol": {
