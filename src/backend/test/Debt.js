@@ -22,8 +22,8 @@ describe('Debt', function () {
         ERC20Token = await ethers.getContractFactory("Token");
         token = await ERC20Token.deploy(totalSupply);
         PFLBloc = await ethers.getContractFactory("PFLBloc");
-        pflBloc = await PFLBloc.deploy(lpToken.address, token.address);
-        [owner, addr1, addr2, balanceReceiver, ...addrs] = await ethers.getSigners();
+        [owner, addr1, addr2, balanceReceiver, stategyManager, ...addrs] = await ethers.getSigners();
+        pflBloc = await PFLBloc.deploy(lpToken.address, token.address, stategyManager.address);
         await token.approve(pflBloc.address, constants.MaxUint256); 
     })
    
@@ -103,7 +103,7 @@ describe('Debt', function () {
             })
         })
 
-        describe('verify debt with incremental staking', () => {
+        describe('verify debt with gradual staking', () => {
             it('stakes', async () => {
                 blockNumber = await block(
                     pflBloc.updateProfiles(
@@ -133,7 +133,7 @@ describe('Debt', function () {
                 );
                 blocksToPay = currentBlock.sub(blockNumber);
                 expect(debt).to.equal(premium.mul(blocksToPay));
-                // advanced 1 block, staked funds are now 500
+                // advanced 1 block, staked funds are now 00
                 expect(debt).to.equal(10);
             })
         })

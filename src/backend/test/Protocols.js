@@ -28,12 +28,10 @@ describe('Protocols', function () {
         token = await ERC20Token.deploy(totalSupply);
         
         PFLBloc = await ethers.getContractFactory("PFLBloc");
-        pflBloc = await PFLBloc.deploy(lpToken.address, token.address);
+        [owner, addr1, addr2, balanceReceiver, strategyManager, ...addrs] = await ethers.getSigners();
+        pflBloc = await PFLBloc.deploy(lpToken.address, token.address, strategyManager.address);
 
-        [owner, addr1, addr2, balanceReceiver, ...addrs] = await ethers.getSigners();
         
-        
-
         // Approve Token allowance to be transferred by pflBloc
         await token.approve(pflBloc.address, constants.MaxUint256);
         await lpToken.approve(pflBloc.address, constants.MaxUint256);

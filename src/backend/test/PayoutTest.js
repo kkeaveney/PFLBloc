@@ -21,10 +21,10 @@ describe('Payout', function () {
             ERC20Token = await ethers.getContractFactory("Token");
             token = await ERC20Token.deploy(totalSupply);
             PFLBloc = await ethers.getContractFactory("PFLBloc");
-            pflBloc = await PFLBloc.deploy(lpToken.address, token.address);
+            [owner, addr1, addr2, balanceReceiver, strategyManager, ...addrs] = await ethers.getSigners();
+            pflBloc = await PFLBloc.deploy(lpToken.address, token.address, strategyManager.address);
             const Payout = await ethers.getContractFactory('PayOut');
             payout = await Payout.deploy();
-            [owner, addr1, addr2, balanceReceiver, ...addrs] = await ethers.getSigners();
             stake = 250;
             await token.approve(pflBloc.address, constants.MaxUint256);
             await lpToken.approve(pflBloc.address, constants.MaxUint256);

@@ -23,8 +23,8 @@ describe('Debt', function () {
             ERC20Token = await ethers.getContractFactory("Token");
             token = await ERC20Token.deploy(totalSupply);
             PFLBloc = await ethers.getContractFactory("PFLBloc");
-            pflBloc = await PFLBloc.deploy(lpToken.address, token.address);
-            [owner, addr1, addr2, balanceReceiver, ...addrs] = await ethers.getSigners();
+            [owner, addr1, addr2, balanceReceiver, strategyManager, ...addrs] = await ethers.getSigners();
+            pflBloc = await PFLBloc.deploy(lpToken.address, token.address, strategyManager.address);
             await token.approve(pflBloc.address, constants.MaxUint256); 
         })
 

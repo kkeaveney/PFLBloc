@@ -22,9 +22,8 @@ describe('PFL Contract', function () {
         token = await ERC20Token.deploy(totalSupply);
         
         PFLBloc = await ethers.getContractFactory("PFLBloc");
-        pflBloc = await PFLBloc.deploy(lpToken.address, token.address);
-
-        [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+        [owner, addr1, addr2, strategyManager, ...addrs] = await ethers.getSigners();
+        pflBloc = await PFLBloc.deploy(lpToken.address, token.address, strategyManager.address);
 
         // Approve Token allowance to be transferred by pflBloc
         await token.approve(pflBloc.address, constants.MaxUint256);
