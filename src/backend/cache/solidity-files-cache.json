@@ -546,8 +546,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/StrategyManager.sol": {
-      "lastModificationDate": 1618912181547,
-      "contentHash": "15bc7b0fc991eab1e8126db253f21309",
+      "lastModificationDate": 1619020204697,
+      "contentHash": "facf326cfe611fa99291229f9bc6a952",
       "sourceName": "src/backend/contracts/StrategyManager.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -576,6 +576,7 @@
         "@openzeppelin/contracts/token/ERC20/SafeERC20.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/math/SafeMath.sol",
+        "hardhat/console.sol",
         "./interfaces/chainlink/AggregatorV3Interface.sol",
         "./interfaces/IPool.sol",
         "./interfaces/IStrategyManager.sol",
@@ -765,8 +766,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/mocks/MockStrategy.sol": {
-      "lastModificationDate": 1618408209914,
-      "contentHash": "08de4db4675f5b4543cf2e89f607e6b0",
+      "lastModificationDate": 1619020372034,
+      "contentHash": "4370384cec51368213b4692fcdb4ab6d",
       "sourceName": "src/backend/contracts/mocks/MockStrategy.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -792,7 +793,8 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../interfaces/IStrategy.sol"
+        "../interfaces/IStrategy.sol",
+        "hardhat/console.sol"
       ],
       "versionPragmas": [
         "^0.7.3"

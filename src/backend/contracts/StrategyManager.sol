@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "hardhat/console.sol";
 
 import "./interfaces/chainlink/AggregatorV3Interface.sol";
 
@@ -102,6 +103,7 @@ contract StrategyManager is IStrategyManager, Ownable {
         address strategy = strategies[_token];
         require(strategy != address(0), "NO_STRATEGY");
         require(IStrategy(strategy).withdrawAll() == 0, "NOT_EMPYY");
+        //console.log(IStrategy(strategy).balanceOf());
         require(tokens[_index] == _token, "INVALID_INDEX");
 
         tokens[_index] = tokens[tokens.length - 1];

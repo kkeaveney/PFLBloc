@@ -140,30 +140,62 @@ let MockStrategy;
         expect(await strategyManager.strategies(AAVE.address)).to.eq(mockStrategyAave.address)
     })
 
-    it('removes strategy', async () => {
-        // ignore tokens
-        // check balances
-        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(parseEther('1000'))
-        expect(await strategyManager.balanceOf(AAVE.address)).to.eq(parseEther('300'))
-        
-        // remove strategy
-        await mockStrategyAave.setWithdrawAllReturn(0);
-        await strategyManager.removeStrategy(AAVE.address, 1);
-        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(parseEther('1000'))
-        expect(await strategyManager.balanceOf(AAVE.address)).to.eq(parseEther('0')) // WHERE HAS IT GONE?
-        expect(await strategyManager.balanceOfNative()).to.eq(parseEther('1000'))  // WHY
-        
+    it('removes ERC20 strategy', async () => {
+        await strategyManager.removeStrategy(ERC20.address, 0);
+        expect(await strategyManager.balanceOf(ERC20.address)).to.eq(parseEther('0'));
+        expect(await mockStrategy.balanceOf()).to.be.eq(parseEther('0'));
+
+    })
+
+    it('removes AAVE Strategy', async () => {
+        await strategyManager.removeStrategy(AAVE.address, 0);
+        expect(await strategyManager.balanceOf(AAVE.address)).to.eq(parseEther('0'));
+        expect(await mockStrategyAave.balanceOf()).to.be.eq(parseEther('0'));
     })
 
     it('validates storage again', async () => {
-        // ERC20
-        expect(await strategyManager.strategies(ERC20.address)).to.eq(mockStrategy.address);
+        expect(await strategyManager.strategies(ERC20.address)).to.eq(constants.AddressZero);
         expect(await strategyManager.priceOracle(ERC20.address)).to.eq(constants.AddressZero);
-        expect(await strategyManager.tokens(0)).to.eq(ERC20.address);
-        // AAVE
         expect(await strategyManager.strategies(AAVE.address)).to.eq(constants.AddressZero);
         expect(await strategyManager.priceOracle(AAVE.address)).to.eq(constants.AddressZero);
+        await expect(strategyManager.tokens(0)).to.be.reverted;
         await expect(strategyManager.tokens(1)).to.be.reverted;
     })
+
+    // it('removes strategy', async () => {
+    //     // ignore tokens
+    //     // check balances
+    //     expect(await strategyManager.balanceOf(ERC20.address)).to.eq(parseEther('1000'))
+    //     expect(await strategyManager.balanceOf(AAVE.address)).to.eq(parseEther('300'))
+    //     expect(await mockStrategyAave.balanceOf()).to.be.eq(parseEther('300'));
+        
+    //     // remove strategy
+    //     await mockStrategyAave.setWithdrawAllReturn(0);
+    //     await strategyManager.removeStrategy(AAVE.address, 1);
+    //     // AAVE balance has been removed from Strategy Manager
+    //     expect(await strategyManager.balanceOf(AAVE.address)).to.eq(parseEther('0')) 
+    //     // AAVE balance remains in AAVE strategy
+    //     expect(await mockStrategyAave.balanceOf()).to.be.eq(parseEther('300'))
+
+    //     //ERC20 balance remain in Strategy Manager
+    //     expect(await strategyManager.balanceOf(ERC20.address)).to.eq(parseEther('1000'))
+    //     expect(await mockStrategy.balanceOf()).to.eq(parseEther('1000')) 
+
+    //     expect(await strategyManager.balanceOfNative()).to.eq(parseEther('1000'))  // WHY
+        
+    // })
+
+    // it('validates storage again', async () => {
+    //     // ERC20
+    //     expect(await strategyManager.strategies(ERC20.address)).to.eq(mockStrategy.address);
+    //     expect(await strategyManager.priceOracle(ERC20.address)).to.eq(constants.AddressZero);
+    //     expect(await strategyManager.tokens(0)).to.eq(ERC20.address);
+    //     // AAVE
+    //     expect(await strategyManager.strategies(AAVE.address)).to.eq(constants.AddressZero);
+    //     expect(await strategyManager.priceOracle(AAVE.address)).to.eq(constants.AddressZero);
+    //     await expect(strategyManager.tokens(1)).to.be.reverted;
+    // })
+
+    
 })  
     

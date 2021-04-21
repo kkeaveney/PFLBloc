@@ -2,6 +2,7 @@ pragma solidity ^0.7.3;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IStrategy.sol";
+import "hardhat/console.sol";
 
 contract MockStrategy is IStrategy {
     address public override want = address(1);
@@ -35,6 +36,7 @@ contract MockStrategy is IStrategy {
         require(!withdrawAllRevert, "Withdraw_all_Revert");
         if(withdrawAllReturn != uint256(-1)) {
             return withdrawAllReturn;
+            
         }
         IERC20(want).transfer(msg.sender, balanceOf());
         return balanceOf();
