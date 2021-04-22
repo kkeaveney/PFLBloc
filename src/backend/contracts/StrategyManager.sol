@@ -47,13 +47,16 @@ contract StrategyManager is IStrategyManager, Ownable {
             (, int256 _price, , , ) = priceOracle[token].latestRoundData();
 
             uint256 price = uint256(_price);
+            
             if (priceOracle[token].decimals() == 8) {
                 price = price.mul(10**10);
+                
             }
             balance = balance.add(price.mul(balanceOf(token)).div(10**18));
+            console.log(balance);
         }
         return balance;
-    }
+        }
 
     function balanceOf(address _token) public override view returns (uint256) {
         // this method should make sure a 'safe' value is returned from the strategies
