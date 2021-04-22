@@ -249,15 +249,15 @@ describe('multi strategies with active oracles', () => {
         expect(await strategyManager.balanceOfNative()).to.be.equal(parseEther('110000'))  // WHY? ORACLES ?
     })
 
-    it('removes strategy', async () => {
-        await mockStrategyAave.setWithdrawAllReturn(0);
-        await strategyManager.removeStrategy(AAVE.address, 1);
-        // AAVE balance has been removed from Strategy Manager
-        expect(await strategyManager.balanceOf(AAVE.address)).to.eq(parseEther('0'));
-        // AAVE balance remains in AAVE strategy
-        expect(await mockStrategyAave.balanceOf()).to.eq(parseEther('10000'));
+    // it('removes strategy', async () => {
+    //     await mockStrategyAave.setWithdrawAllReturn(0);
+    //     await strategyManager.removeStrategy(AAVE.address, 1);
+    //     // AAVE balance has been removed from Strategy Manager
+    //     expect(await strategyManager.balanceOf(AAVE.address)).to.eq(parseEther('0'));
+    //     // AAVE balance remains in AAVE strategy
+    //     expect(await mockStrategyAave.balanceOf()).to.eq(parseEther('10000'));
 
-    })
+    // })
 }) 
     
 
