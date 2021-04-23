@@ -766,8 +766,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/mocks/MockStrategy.sol": {
-      "lastModificationDate": 1619171256401,
-      "contentHash": "67d5f678706797e58a464fea9e7b4346",
+      "lastModificationDate": 1619185454542,
+      "contentHash": "4b0705ac2b223dec4a4399fda4e2ffd1",
       "sourceName": "src/backend/contracts/mocks/MockStrategy.sol",
       "solcConfig": {
         "version": "0.7.3",

@@ -61,5 +61,9 @@ contract MockStrategy is IStrategy {
         return IERC20(want).balanceOf(address(this));
     }
 
+    function test() public view returns (uint256) {
+        return uint256(-1);
+    }
+
     
 }

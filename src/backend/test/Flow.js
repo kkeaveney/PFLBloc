@@ -215,7 +215,7 @@ describe('multi strategies with active oracles', () => {
         expect(await strategyManager.balanceOfNative()).to.be.equal(parseEther('110000')) 
     })
 
-    it('removes AAVE strategy', async () => {
+    it('removes strategies', async () => {
         await mockStrategyAave.setWithdrawAllReturn(0);
         await strategyManager.removeStrategy(AAVE.address, 1);
         // AAVE balance has been removed from Strategy Manager
@@ -230,8 +230,9 @@ describe('multi strategies with active oracles', () => {
         expect(await mockStrategy.balanceOf()).to.eq(parseEther('10000'));
         expect(await strategyManager.balanceOf(ERC20.address)).to.eq(parseEther('0'));
         expect(await strategyManager.balanceOfNative()).to.be.equal(parseEther('0')) 
-        expect(await mockPool.token()).to.eq(ERC20.address); // What is the POOl exacatly
+        // What is the POOl exacatly
     })
+
     it('withdraws funds from strategy', async () => {
         // Withdraw funds from strategy to owner
         expect(await mockStrategy.balanceOf()).to.eq(parseEther('10000'));
@@ -259,7 +260,24 @@ describe('multi strategies with active oracles', () => {
         await expect(mockStrategyAave.withdrawAll()).to.be.revertedWith('Withdraw_all_Revert');
     })
 
-    it('withdraws all funds', async () => {
+    it('withdraws all funds, refunds owner', async () => {
+        
+        expect(await ERC20.balanceOf(owner.address)).to.eq(parseEther('5000'));
+        expect(await AAVE.balanceOf(owner.address)).to.eq(parseEther('5000')); 
+        expect(await mockStrategy.balanceOf()).to.eq(parseEther('5000'));
+        expect(await mockStrategyAave.balanceOf()).to.eq(parseEther('5000'));
+
+        await mockStrategy.setWithdrawAllRevert(0);
+        await mockStrategyAave.setWithdrawAllRevert(0);
+        
+        await mockStrategy.withdrawAll();
+        await mockStrategyAave.withdrawAll();
+        
+        expect(await mockStrategy.balanceOf()).to.eq(parseEther('0'));
+        expect(await mockStrategyAave.balanceOf()).to.eq(parseEther('0'));
+
+        expect(await ERC20.balanceOf(owner.address)).to.eq(parseEther('10000'));
+        expect(await AAVE.balanceOf(owner.address)).to.eq(parseEther('10000'));
 
     })
 }) 
