@@ -546,8 +546,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/StrategyManager.sol": {
-      "lastModificationDate": 1619097002089,
-      "contentHash": "248d47f76ec7dce1c3c219dbab0c366e",
+      "lastModificationDate": 1619097403360,
+      "contentHash": "a7829a1a49263399cc9ab984c8fc647d",
       "sourceName": "src/backend/contracts/StrategyManager.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -660,8 +660,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/interfaces/IStrategy.sol": {
-      "lastModificationDate": 1618393225046,
-      "contentHash": "4596bd2f32eb58b607e115beed3509e2",
+      "lastModificationDate": 1619171952926,
+      "contentHash": "e9abe3d4f27ae7f34f0301105cf6afa2",
       "sourceName": "src/backend/contracts/interfaces/IStrategy.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -766,8 +766,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/mocks/MockStrategy.sol": {
-      "lastModificationDate": 1619020372034,
-      "contentHash": "4370384cec51368213b4692fcdb4ab6d",
+      "lastModificationDate": 1619171256401,
+      "contentHash": "67d5f678706797e58a464fea9e7b4346",
       "sourceName": "src/backend/contracts/mocks/MockStrategy.sol",
       "solcConfig": {
         "version": "0.7.3",

@@ -53,7 +53,7 @@ contract StrategyManager is IStrategyManager, Ownable {
                 
             }
             balance = balance.add(price.mul(balanceOf(token)).div(10**18));
-            console.log(balance);
+            
         }
         return balance;
         }
