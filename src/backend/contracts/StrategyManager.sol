@@ -106,7 +106,7 @@ contract StrategyManager is IStrategyManager, Ownable {
         address strategy = strategies[_token];
         require(strategy != address(0), "NO_STRATEGY");
         require(IStrategy(strategy).withdrawAll() == 0, "NOT_EMPYY");
-        //console.log(IStrategy(strategy).balanceOf());
+        
         require(tokens[_index] == _token, "INVALID_INDEX");
 
         tokens[_index] = tokens[tokens.length - 1];
