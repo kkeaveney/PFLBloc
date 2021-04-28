@@ -546,8 +546,8 @@
       ]
     },
     "/Users/kevinkeaveney/Projects/PFLBloc/src/backend/contracts/StrategyManager.sol": {
-      "lastModificationDate": 1619097403360,
-      "contentHash": "a7829a1a49263399cc9ab984c8fc647d",
+      "lastModificationDate": 1619607510019,
+      "contentHash": "bbf2fca8f93d98b644feda4d0d4deb70",
       "sourceName": "src/backend/contracts/StrategyManager.sol",
       "solcConfig": {
         "version": "0.7.3",
