@@ -37,6 +37,7 @@ contract StrategyManager is IStrategyManager, Ownable {
     function balanceOfNative() external override view returns (uint256) {
         address native = address(IPool(pool).token());
         uint256 balance = balanceOf(native);
+        
         for (uint256 i = 0; i < tokens.length; i++) {
             address token = tokens[i];
             if (token == native) {
@@ -53,7 +54,6 @@ contract StrategyManager is IStrategyManager, Ownable {
                 
             }
             balance = balance.add(price.mul(balanceOf(token)).div(10**18));
-            
         }
         return balance;
         }
