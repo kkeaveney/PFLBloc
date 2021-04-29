@@ -1,4 +1,5 @@
 // We import Chai to use its asserting functions here.
+const { parseEther } = require("@ethersproject/units");
 const { expect } = require("chai");
 
 // `describe` is a Mocha function that allows you to organize your tests. It's
@@ -35,7 +36,7 @@ describe("Token contract", function () {
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens onces its transaction has been
     // mined.
-    hardhatToken = await Token.deploy();
+    hardhatToken = await Token.deploy('200');
   });
 
   // You can nest describe calls to create subsections.
@@ -80,7 +81,7 @@ describe("Token contract", function () {
       // `require` will evaluate false and revert the transaction.
       await expect(
         hardhatToken.connect(addr1).transfer(owner.address, 1)
-      ).to.be.revertedWith("Not enough tokens");
+      ).to.be.revertedWith("transfer amount exceeds balance");
 
       // Owner balance shouldn't have changed.
       expect(await hardhatToken.balanceOf(owner.address)).to.equal(

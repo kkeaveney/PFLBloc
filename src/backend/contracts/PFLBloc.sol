@@ -224,20 +224,20 @@ contract PFLBloc is Ownable {
         uint256 funds = withdraw.stake.mul(getTotalStakedFunds()).div(
             lpToken.totalSupply()
         );
-        
+
         if(funds > totalStakedFunds) {
             _withdrawStrategyManager(funds.sub(totalStakedFunds));
         } else if (redirectStakeToStrategy && funds < totalStakedFunds) {
             _depositStrategyManager(totalStakedFunds.sub(funds));
         }
-
-        
         
         ERC20Token.transfer(_staker, funds);
         lpToken.burn(address(this), withdraw.stake);
-        
-    }
+        }
+ 
+       
 
+  
     function addProfileBalance(bytes32 _protocol, uint256 _amount) external {
         require(
             ERC20Token.transferFrom(msg.sender, address(this), _amount), 
