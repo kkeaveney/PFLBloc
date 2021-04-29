@@ -162,8 +162,17 @@ describe('Protocols', function () {
             expect(await pflBloc.coveredFunds(PLACEHOLDER_PROTOCOL)).to.be.equal(250);
             expect(await pflBloc.withdrawStake(250));
             expect(await token.balanceOf(owner.address)).to.be.equal(totalSupply - (initialAccountBalance * 2) - initialStake - profileFunds);
-            expect(await pflBloc.claimFunds(owner.address));
-            expect(await token.balanceOf(owner.address)).to.be.equal(totalSupply - (initialAccountBalance * 2) - profileFunds);
+            expect(await token.balanceOf(owner.address)).to.be.equal('979740');
+            await pflBloc.claimFunds(owner.address) // funds = 256
+            
+            expect(await token.balanceOf(owner.address)).to.be.equal(totalSupply - (initialAccountBalance * 2) - initialStake - profileFunds + 256);
+            expect(await token.balanceOf(owner.address)).to.be.equal('979996');
+            // 1,000000
+            // 10,000
+            // 10
+            console.log(979996 - 979740);
+
+
         })
     })
 

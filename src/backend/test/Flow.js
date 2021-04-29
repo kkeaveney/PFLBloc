@@ -306,8 +306,49 @@ describe('multi strategies with active oracles', () => {
         expect(await strategyManager.balanceOfNative()).to.be.equal(parseEther('0')) 
         // What is the POOl exacatly - doesn't actually contain any funds
     })
+})
 
-    // remove strategies causes tests to fail.
-}) 
+ describe('multiple users', () => {
+    let MockStrategy;
+    before(async function () {
+      [owner, addr1] = await ethers.getSigners();
+      WETH = await ethers.getContractFactory("ExampleToken");
+      ERC20 = await WETH.deploy(owner.getAddress(), parseEther("10000"));
+      AAVE = await WETH.deploy(owner.getAddress(), parseEther("10000"));
+  
+      const MockPool = await ethers.getContractFactory("MockPool");
+      mockPool = await MockPool.deploy();
+      await mockPool.setToken(ERC20.address);
+  
+      MockStrategy = await ethers.getContractFactory("MockStrategy");
+      mockStrategy = await MockStrategy.deploy();
+      await mockStrategy.setWant(ERC20.address);
+      mockStrategyAave = await MockStrategy.deploy();
+      await mockStrategyAave.setWant(AAVE.address);
+  
+      const MockOracle = await ethers.getContractFactory("MockOracle");
+      mockOracleAave = await MockOracle.deploy();
+      // gwei = 9, mockOracle = 8. so 1 == 10
+      await mockOracleAave.setPrice(parseUnits("1", "gwei"));
+  
+      const StrategyManager = await ethers.getContractFactory("StrategyManager");
+      strategyManager = await StrategyManager.deploy();
+      await mockPool.setSm(strategyManager.address);
+      await strategyManager.setPool(mockPool.address);
+
+      await strategyManager.updateStrategy(
+          ERC20.address,
+          mockStrategy.address,
+          constants.AddressZero
+      )
+
+      await strategyManager.updateStrategy(
+          AAVE.address,
+          mockStrategyAave.address,
+          mockOracleAave.address
+      )
+    });
+     
+ })
     
 
